@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="help" name="ProyectoTralalaLogin">    
+	<property environment="env"/>
+	<property name="source.dir" location="src"/>
+   	<property name="bin.dir" location="bin"/>
+	<property name="dist.dir" location="dist"/>
+	<property name="classpath" location="bin"/>
+	<property name="export.file" value="ServicioAutorizacion.jar"/>
+	<property name="server.port" value="1099"/> 
+	<property name="server.IP" value="127.0.0.1"/> 
+	<property name="server.Name" value="ServicioAutorizacion"/>
+	<property name="policy.file" location="security/java.policy"/>	
+
+	<path id="classpath">
+	        <pathelement location="${bin.dir}"/>
+	</path>
+	
+	<target name="help">
+		<echo>Usage: ant [build | export | server]</echo>
+	</target>
+	
+	<target name="build" description="Builds the project">
+		<delete dir="${bin.dir}"/>
+		<mkdir dir="${bin.dir}"/>
+		<javac srcdir="${source.dir}" destdir="${bin.dir}" classpathref="classpath" deprecation="true" fork="true" includeantruntime="no"/>
+    </target>
+	
+	<target name="export" depends="build" description="Export the project into a .jar file">
+		<delete dir="${dist.dir}"/>
+		<mkdir dir="${dist.dir}"/>
+		<jar destfile="${dist.dir}/${export.file}" basedir="${bin.dir}" includes="**/IServicioAutorizacion.class"/>
+	</target>	
+    
+	<target name="server" description="Runs Server program">
+		<java classname="login.ServicioAutorizacion" classpathref="classpath" fork="true">
+        	<jvmarg value="-Djava.rmi.server.codebase=file:${bin.dir}/"/>
+			<jvmarg value="-Djava.security.policy=${policy.file}"/>
+        	<arg value="${server.IP}"/> 
+	 		<arg value="${server.port}"/> 
+			<arg value="${server.Name}"/> 
+        </java>
+    </target>
+
+</project>
